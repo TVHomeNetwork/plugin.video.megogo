@@ -1,0 +1,6 @@
+1.0.2
+- new logIn method (via code): registration device in user panel on megogo.net by code generated in kodi plugin
+- fix generating M3U channel list
+1.0.1
+- infoTagVideo support (from Kodi ver 20)
+- sorting channel list by names (option / Kodi tools)

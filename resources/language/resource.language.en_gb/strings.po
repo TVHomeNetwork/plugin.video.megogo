@@ -1,0 +1,247 @@
+# Kodi Media Center language file
+# Addon Name: Megogo
+# Addon id: plugin.video.megogo_atv
+# Addon Provider: lg
+msgid ""
+msgstr ""
+
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+
+msgctxt "#30001"
+msgid "LIVE TV"
+msgstr ""
+
+msgctxt "#30002"
+msgid "LIVE TV by category"
+msgstr ""
+
+msgctxt "#30003"
+msgid "Replay TV"
+msgstr ""
+
+msgctxt "#30004"
+msgid "VOD"
+msgstr ""
+
+msgctxt "#30005"
+msgid "Search"
+msgstr ""
+
+msgctxt "#30006"
+msgid "Log in"
+msgstr ""
+
+msgctxt "#30007"
+msgid "Log out"
+msgstr ""
+
+msgctxt "#30008"
+msgid "Catalogue"
+msgstr ""
+
+msgctxt "#30009"
+msgid "Production year"
+msgstr ""
+
+msgctxt "#30010"
+msgid "Countries"
+msgstr ""
+
+msgctxt "#30011"
+msgid "Genres"
+msgstr ""
+
+msgctxt "#30012"
+msgid "Cast"
+msgstr ""
+
+msgctxt "#30013"
+msgid "Age limit"
+msgstr ""
+
+msgctxt "#30014"
+msgid "IMDB rating"
+msgstr ""
+
+msgctxt "#30015"
+msgid "Audio lng"
+msgstr ""
+
+msgctxt "#30016"
+msgid "Duration"
+msgstr ""
+
+msgctxt "#30017"
+msgid "No data"
+msgstr ""
+
+msgctxt "#30018"
+msgid "Details"
+msgstr ""
+
+msgctxt "#30019"
+msgid "Clear filters"
+msgstr ""
+
+msgctxt "#30020"
+msgid "Next page"
+msgstr ""
+
+msgctxt "#30021"
+msgid "Register the device on megogo.net using the code {c} and then press OK"
+msgstr ""
+
+#Dialogs
+
+msgctxt "#30100"
+msgid "Logged in"
+msgstr ""
+
+msgctxt "#30101"
+msgid "Log in error"
+msgstr ""
+
+msgctxt "#30102"
+msgid "Complete account data in settings"
+msgstr ""
+
+msgctxt "#30103"
+msgid "Logged out"
+msgstr ""
+
+msgctxt "#30104"
+msgid "Sources"
+msgstr ""
+
+msgctxt "#30105"
+msgid "Audio lng"
+msgstr ""
+
+msgctxt "#30106"
+msgid "Not available"
+msgstr ""
+
+msgctxt "#30107"
+msgid "Put file name and path"
+msgstr ""
+
+msgctxt "#30108"
+msgid "M3U list generate in progress"
+msgstr ""
+
+msgctxt "#30109"
+msgid "M3U list Generated"
+msgstr ""
+
+msgctxt "#30110"
+msgid "Program doesn't exist"
+msgstr ""
+
+msgctxt "#30111"
+msgid "Search"
+msgstr ""
+
+msgctxt "#30112"
+msgid "Category"
+msgstr ""
+
+msgctxt "#30113"
+msgid "LogIn error: the code was not generated"
+msgstr ""
+
+msgctxt "#30114"
+msgid "LogIn error: OK button not pressed"
+msgstr ""
+
+msgctxt "#30115"
+msgid "LogIn error: error during device registration"
+msgstr ""
+
+msgctxt "#30116"
+msgid "LogIn error: e-mail/pass"
+msgstr ""
+
+#settings
+
+msgctxt "#30200"
+msgid "Account data"
+msgstr ""
+
+msgctxt "#30201"
+msgid "E-mail"
+msgstr ""
+
+msgctxt "#30202"
+msgid "Password"
+msgstr ""
+
+msgctxt "#30203"
+msgid "Zone"
+msgstr ""
+
+msgctxt "#30204"
+msgid "M3U list creator"
+msgstr ""
+
+msgctxt "#30205"
+msgid "File name"
+msgstr ""
+
+msgctxt "#30206"
+msgid "Path"
+msgstr ""
+
+msgctxt "#30207"
+msgid "Create M3U list"
+msgstr ""
+
+msgctxt "#30208"
+msgid "Player"
+msgstr ""
+
+msgctxt "#30209"
+msgid "Select video quality manually"
+msgstr ""
+
+msgctxt "#30210"
+msgid "Audio lang (VOD)"
+msgstr ""
+
+msgctxt "#30211"
+msgid "Selected manually"
+msgstr ""
+
+msgctxt "#30212"
+msgid "Default"
+msgstr ""
+
+msgctxt "#30213"
+msgid "Player type"
+msgstr ""
+
+msgctxt "#30214"
+msgid "Time offset - catchup (Simple Client) [in hours]"
+msgstr ""
+
+msgctxt "#30215"
+msgid "General"
+msgstr ""
+
+msgctxt "#30216"
+msgid "Service language"
+msgstr ""
+
+msgctxt "#30217"
+msgid "DRM Support"
+msgstr ""
+
+msgctxt "#30218"
+msgid "LogIn Method"
+msgstr ""

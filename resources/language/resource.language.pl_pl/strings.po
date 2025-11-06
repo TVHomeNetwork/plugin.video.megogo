@@ -1,0 +1,246 @@
+# Kodi Media Center language file
+# Addon Name: Megogo
+# Addon id: plugin.video.megogo_atv
+# Addon Provider: lg
+msgid ""
+msgstr ""
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "#30001"
+msgid "LIVE TV"
+msgstr "TV na żywo"
+
+msgctxt "#30002"
+msgid "LIVE TV by category"
+msgstr "TV na żywo wg kategorii"
+
+msgctxt "#30003"
+msgid "Replay TV"
+msgstr "Archiwum TV"
+
+msgctxt "#30004"
+msgid "VOD"
+msgstr "VOD"
+
+msgctxt "#30005"
+msgid "Search"
+msgstr "Szukaj"
+
+msgctxt "#30006"
+msgid "Log in"
+msgstr "Zaloguj"
+
+msgctxt "#30007"
+msgid "Log out"
+msgstr "Wyloguj"
+
+msgctxt "#30008"
+msgid "Catalogue"
+msgstr "Katalog"
+
+msgctxt "#30009"
+msgid "Production year"
+msgstr "Rok produkcji"
+
+msgctxt "#30010"
+msgid "Countries"
+msgstr "Kraje"
+
+msgctxt "#30011"
+msgid "Genres"
+msgstr "Gatunki"
+
+msgctxt "#30012"
+msgid "Cast"
+msgstr "Obsada"
+
+msgctxt "#30013"
+msgid "Age limit"
+msgstr "Limit wiekowy"
+
+msgctxt "#30014"
+msgid "IMDB rating"
+msgstr "Ocena wg IMDB"
+
+msgctxt "#30015"
+msgid "Audio lng"
+msgstr "Język Audio"
+
+msgctxt "#30016"
+msgid "Duration"
+msgstr "Czas"
+
+msgctxt "#30017"
+msgid "No data"
+msgstr "Brak danych"
+
+msgctxt "#30018"
+msgid "Details"
+msgstr "Szczegóły"
+
+msgctxt "#30019"
+msgid "Clear filters"
+msgstr "Czyść filtry"
+
+msgctxt "#30020"
+msgid "Next page"
+msgstr "Następna strona"
+
+msgctxt "#30021"
+msgid "Zarejestruj urządzenie na stronie megogo.net używając kodu {c} a następnie naciśnij OK"
+msgstr ""
+
+#Dialogs
+
+msgctxt "#30100"
+msgid "Logged in"
+msgstr "Zalogowano"
+
+msgctxt "#30101"
+msgid "Log in error"
+msgstr "Błąd logowania"
+
+msgctxt "#30102"
+msgid "Complete account data in settings"
+msgstr "Uzupełnij dane konta w ustawieniach"
+
+msgctxt "#30103"
+msgid "Logged out"
+msgstr "Wylogowano"
+
+msgctxt "#30104"
+msgid "Sources"
+msgstr "Żródła"
+
+msgctxt "#30105"
+msgid "Audio lng"
+msgstr "Język audio"
+
+msgctxt "#30106"
+msgid "Not available"
+msgstr "Niedostępny"
+
+msgctxt "#30107"
+msgid "Put file name and path"
+msgstr "Podaj nazwę pliku i lokalizację"
+
+msgctxt "#30108"
+msgid "M3U list generate in progress"
+msgstr "Generuję listę M3U"
+
+msgctxt "#30109"
+msgid "M3U list Generated"
+msgstr "Wygenerowano listę M3U"
+
+msgctxt "#30110"
+msgid "Program doesn't exist"
+msgstr "Nie znaleziono programu"
+
+msgctxt "#30111"
+msgid "Search"
+msgstr "Szukaj"
+
+msgctxt "#30112"
+msgid "Category"
+msgstr "Kategorie"
+
+msgctxt "#30113"
+msgid "LogIn error: the code was not generated"
+msgstr "Błąd logowania: kod nie został wygenerowany"
+
+msgctxt "#30114"
+msgid "LogIn error: OK button not pressed"
+msgstr "Błąd logowania: nie wciśnięto <OK>"
+
+msgctxt "#30115"
+msgid "LogIn error: error during device registration"
+msgstr "Błąd logowania: błąd rejestracji urządzenia"
+
+msgctxt "#30116"
+msgid "LogIn error: e-mail/pass"
+msgstr "Błąd logowania: e-mail/pass"
+
+#settings
+
+msgctxt "#30200"
+msgid "Account data"
+msgstr "Dane konta"
+
+msgctxt "#30201"
+msgid "E-mail"
+msgstr "E-mail"
+
+msgctxt "#30202"
+msgid "Password"
+msgstr "Hasło"
+
+msgctxt "#30203"
+msgid "Zone"
+msgstr "Strefa"
+
+msgctxt "#30204"
+msgid "M3U list creator"
+msgstr "Kreator listy M3U"
+
+msgctxt "#30205"
+msgid "File name"
+msgstr "Nazwa pliku"
+
+msgctxt "#30206"
+msgid "Path"
+msgstr "Lokalizacja"
+
+msgctxt "#30207"
+msgid "Create M3U list"
+msgstr "Generuj listę M3U"
+
+msgctxt "#30208"
+msgid "Player"
+msgstr "Odtwarzacz"
+
+msgctxt "#30209"
+msgid "Select video quality manually"
+msgstr "Wybór jakości video"
+
+msgctxt "#30210"
+msgid "Audio lang (VOD)"
+msgstr "Język audio (VOD)"
+
+msgctxt "#30211"
+msgid "Selected manually"
+msgstr "Wybór ręczny"
+
+msgctxt "#30212"
+msgid "Default"
+msgstr "Domyślny serwisu"
+
+msgctxt "#30213"
+msgid "Player type"
+msgstr "Rodzaj playera"
+
+msgctxt "#30214"
+msgid "Time offset - catchup (Simple Client) [in hours]"
+msgstr "Różnica czasowa - cztchup (Simple Client [w godz.]"
+
+msgctxt "#30215"
+msgid "General"
+msgstr "Ogólne"
+
+msgctxt "#30216"
+msgid "Service language"
+msgstr "Język serwisu"
+
+msgctxt "#30217"
+msgid "DRM Support"
+msgstr "Wsparcie DRM"
+
+msgctxt "#30218"
+msgid "LogIn Method"
+msgstr "Sposób logowania"
+

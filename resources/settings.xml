@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+	<category label="30200">
+		<setting label="30218" type="select" id="loginMeth" values="via e-mail|via code" default="via e-mail"/>
+		<setting id="username"  type="text" label="30201" default="" />
+		<setting id="password"  type="text" label="30202" option="hidden"  default="" />
+		<setting label="30203" type="select" id="geoZone" values="pl|ua" default="pl"/>
+	</category>
+	<category label="30204">
+        <setting label="30205" type="text" id="fname" default="iptv.m3u"/>
+        <setting label="30206" type="folder" id="path_m3u" source="auto" option="writeable"/>
+        <setting type="action"  action="RunPlugin(plugin://plugin.video.megogo_atv?mode=listM3U)" label="30207" option="close"/>
+	</category>
+	<category label="30208">
+		<setting label="30209" type="bool" id="manualSelectedBitrate" default="true"/>
+		<setting label="30210" type="select" id="audVOD" lvalues="30211|30212" default="0"/>
+		<setting label="30213" type="select" id="playerType" values="ISA|ffmpeg" default="ISA"/>
+		<setting label="30217" type="bool" id="drmSupport" default="false"/>
+		<setting id="cuOffset" type="slider" label="30214" range="-10,1,10" default="0" option='int'/>
+	</category>
+	<category label="30215">
+		<setting label="30216" type="select" id="lng" values="pl|en|ua" default="pl"/>
+	</category>
+</settings>
