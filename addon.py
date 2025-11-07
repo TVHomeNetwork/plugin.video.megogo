@@ -21,7 +21,7 @@ import hashlib
 base_url = sys.argv[0]
 addon_handle = int(sys.argv[1])
 params = dict(parse_qsl(sys.argv[2][1:]))
-addon = xbmcaddon.Addon(id='plugin.video.megogo_atv')
+addon = xbmcaddon.Addon(id='plugin.video.megogo')
 PATH=addon.getAddonInfo('path')
 PATH_profile=xbmcvfs.translatePath(addon.getAddonInfo('profile'))
 if not xbmcvfs.exists(PATH_profile):
@@ -334,7 +334,7 @@ def paraLogOut():
     addon.setSetting('user_id','')
     addon.setSetting('logged','false')
     xbmcplugin.endOfDirectory(addon_handle, cacheToDisc=False)
-    xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo_atv/,replace)')
+    xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo/,replace)')
 
 def refresh_tokens():
 
@@ -688,9 +688,9 @@ def listM3U():
             chName=c['title']
             cid=str(c['id'])
             if c['is_dvr']:
-                data += '#EXTINF:0 tvg-id="%s" tvg-logo="%s" group-title="Megogo" catchup="append" catchup-source="&s={utc:Y-m-dTH:M:S}&e={utcend:Y-m-dTH:M:S}" catchup-days="7",%s\nplugin://plugin.video.megogo_atv?mode=playSource&cid=%s\n' %(chName,img,chName,cid)
+                data += '#EXTINF:0 tvg-id="%s" tvg-logo="%s" group-title="Megogo" catchup="append" catchup-source="&s={utc:Y-m-dTH:M:S}&e={utcend:Y-m-dTH:M:S}" catchup-days="7",%s\nplugin://plugin.video.megogo?mode=playSource&cid=%s\n' %(chName,img,chName,cid)
             else:
-                data += '#EXTINF:0 tvg-id="%s" tvg-logo="%s" group-title="Megogo" ,%s\nplugin://plugin.video.megogo_atv?mode=playSource&cid=%s\n' %(chName,img,chName,cid)
+                data += '#EXTINF:0 tvg-id="%s" tvg-logo="%s" group-title="Megogo" ,%s\nplugin://plugin.video.megogo?mode=playSource&cid=%s\n' %(chName,img,chName,cid)
     
     f = xbmcvfs.File(path_m3u + file_name, 'w')
     f.write(data)
@@ -801,7 +801,7 @@ def addVideoItem(v): #helper
         URL=build_url({'mode':'seasonList','vid':vid})
         iL={'title': title,'sorttitle': title,'mpaa':rating,'plotoutline':desc,'plot': desc,'year':year,'genre':genres,'country':countries,'mediatype':'tvshow'}
     
-    cmItems=[('[B]Details[/B]','RunPlugin(plugin://plugin.video.megogo_atv?mode=details&vid='+vid+')')]
+    cmItems=[('[B]Details[/B]','RunPlugin(plugin://plugin.video.megogo?mode=details&vid='+vid+')')]
     
     setArt={'thumb': img, 'poster': img, 'banner': img, 'icon': img, 'fanart':fanart}
     addItemList(URL, title, setArt, 'video', iL, isF, isP, True, cmItems)
@@ -1250,13 +1250,13 @@ else:
     if mode=='logIn':
         logIn()
         xbmcplugin.endOfDirectory(addon_handle, cacheToDisc=False)
-        xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo_atv/,replace)')
+        xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo/,replace)')
             
     if mode=='logOut':
         logOut()
         if addon.getSetting('logged')=='false':
             xbmcplugin.endOfDirectory(addon_handle, cacheToDisc=False)
-            xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo_atv/,replace)')
+            xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo/,replace)')
     
     if mode=='catalogFltrs':
         catalogFltrs()
