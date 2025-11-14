@@ -9,7 +9,7 @@
 	<category label="30204">
         <setting label="30205" type="text" id="fname" default="iptv.m3u"/>
         <setting label="30206" type="folder" id="path_m3u" source="auto" option="writeable"/>
-        <setting type="action"  action="RunPlugin(plugin://plugin.video.megogo_atv?mode=listM3U)" label="30207" option="close"/>
+        <setting type="action"  action="RunPlugin(plugin://$ID?mode=listM3U)" label="30207" option="close"/>
 	</category>
 	<category label="30208">
 		<setting label="30209" type="bool" id="manualSelectedBitrate" default="true"/>
