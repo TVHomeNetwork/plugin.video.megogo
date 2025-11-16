@@ -1,22 +1,17 @@
 # -*- coding: utf-8 -*-
+import datetime
 import os
+import random
 import sys
+import time
 
-import requests
 import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
 import xbmcvfs
-import re
-import base64
-import json
-import random
-import time
-import datetime
-from html import unescape
-from urllib.parse import urlencode, quote_plus, quote, unquote, parse_qsl
-import hashlib
+
+from urllib.parse import urlencode, parse_qsl
 from resources.lib.request import Request
 
 base_url = sys.argv[0]
