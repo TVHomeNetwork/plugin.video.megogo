@@ -17,6 +17,7 @@ import datetime
 from html import unescape
 from urllib.parse import urlencode, quote_plus, quote, unquote, parse_qsl
 import hashlib
+from resources.lib.request import Request
 
 base_url = sys.argv[0]
 addon_handle = int(sys.argv[1])
@@ -31,35 +32,16 @@ img_addon=PATH+'/icon.png'
 fanart=PATH+'/resources/img/fanart.jpg'
 
 UA='Dalvik/2.1.0 (Linux; U; Android 8.0.0; Unknown sdk_google_atv_x86; Build/OSR1.180418.025)'
-#baseurl='http://smarttv.megogo.net/'
-apiURL='https://api.megogo.net/v1/'#'https://api.megogo.net/stv/'
+
 lang=addon.getSetting('lng')#'pl'
-
-apis={ #apk atv ver 2.11.6
-    'true':['a3a854fdd3','_android_tv_drm_4k_17'],
-    'false':['2901c3d95c','_android_tv_4k_17']
-}
-
-hea={
-    'x-client-type':'AndroidTV',
-    'x-client-version':'2.11.6',
-    'user-agent':UA,
-    'device-name':'Unknown sdk_google_atv_x86',
-    'device-model':'sdk_google_atv_x86',
-    'accept-encoding':'gzip'
-}
+access_token = addon.getSetting('access_token')
+device_id = addon.getSetting('did')
+drm_support = addon.getSetting('drmSupport') == 'true'
+request = Request(access_token, device_id, drm_support, lang)
 
 def translate(text):
       return addon.getLocalizedString(text)
 
-def getCookies():
-    cookies={}
-    if addon.getSetting('logged')=='true':
-        cookies={
-            'access_token':addon.getSetting('access_token'),
-            'rememberme_token':addon.getSetting('remember_me_token')
-        }
-    return cookies
 def openF(u):
     try:
         f=open(u,'r',encoding = 'utf-8')
@@ -81,13 +63,6 @@ def code_gen(x,only_digit=False):
         code+=base[random.randint(0,count)]
     return code
 
-def getSign(p):
-    isDRM=addon.getSetting('drmSupport')
-    s=''.join([k+'='+p[k] for k in p.keys()])
-    s+=apis[isDRM][0] #private_key
-    sHash=hashlib.md5(s.encode('utf-8')).hexdigest()
-    sHash+=apis[isDRM][1] #public_key
-    return sHash
 def build_url(query):
     return base_url + '?' + urlencode(query)
 
@@ -142,91 +117,30 @@ def addItemList(url, name, setArt, medType=False, infoLab={}, isF=True, isPla='f
     xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=isF) 
 
 def configure():
-    url=apiURL+'configuration'
-    params={
-        'lang':lang,
-    }
-    if addon.getSetting('logged')=='true':
-        params['access_token']=addon.getSetting('access_token')
-    params.update({'sign':getSign(params)})
-    resp=req('get',url,hea,params,getCookies())
+    resp = request.get_config()
     saveF(PATH_profile+'conf.txt',str(resp['data']))
 
 def logIn():
-    url=apiURL+'anon/user_token'
-    params={
-        'did':addon.getSetting('did'),
-        'lang':lang
-    }
-    params.update({'sign':getSign(params)})
-    resp=requests.get(url,headers=hea,params=params).json()
+    resp = request.get_anon_user_token()
     accessKey=resp['data']['extra']['access_key']
-    url='http://et.megogo.net/v5/tracker/init/'+accessKey
-    data={
-        "additional": {
-            "device_data": "ro.product.model=sdk_google_atv_x86,ro.product.manufacturer=unknown,ro.product.name=sdk_google_atv_x86,ro.product.brand=google,ro.product.device=generic_x86"
-        },
-        "configuration": {
-            "app_language": lang,
-            "show_score": True,
-            "tv_autostart": False,
-            "video_autoplay": True,
-            "video_autoplay_sound": True
-        },
-        "device": {
-            "app_geo": addon.getSetting('geoZone'),
-            "app_version": "2.11.6",
-            "connection_type": "wi-fi",
-            "model": "sdk_google_atv_x86",
-            "os_name": "android",
-            "os_version": "8.0.0",
-            "screen_height": 1080,
-            "screen_width": 1920,
-            "support_hdr": False,
-            "support_uhd": True,
-            "system_language": lang,
-            "vendor": "unknown"
-        },
-        "event_created_client_ts": int(time.time()*1000),
-        "is_subscriber": 0,
-        "platform_type": "android_tv"
-    }
-    HEA={'content-type':'application/json; charset=UTF-8','connection':'Keep-Alive'}
-    HEA.update(hea)
-    resp=requests.post(url,headers=HEA,json=data)
-    url='http://et.megogo.net/v5/tracker/page_view/'+accessKey
-    data={
-        "event_created_client_ts": int(time.time()*1000),
-        "page": {
-            "code": "page_main",
-        }
-    }
-    resp=requests.post(url,headers=HEA,json=data)
+
+    resp = request.get_tracker_init(accessKey, addon.getSetting('geoZone'))
+
+    resp = request.get_tracker_page_view(accessKey)
+
     login_data=None
     logged=False
 
     loginMeth=addon.getSetting('loginMeth')
     if loginMeth=='via code':
-        url=apiURL+'device/code'
-        params={
-            'device_name':'Device_'+code_gen(3,True),
-            'lang':lang,
-            'did':addon.getSetting('did')
-        }
-        params.update({'sign':getSign(params)})
-        resp=requests.get(url,headers=hea,params=params).json()
+        device_name = 'Device_'+code_gen(3,True)
+        resp = request.get_device_code(device_name)
         if 'result' in resp:
             if resp['result']=='ok':
                 code=resp['data']['code']
                 ok=xbmcgui.Dialog().ok("Login", translate(30021).format(c='[COLOR=yellow][B]%s[/B][/COLOR]'%(code)))
                 if ok:
-                    url=apiURL+'auth/user'
-                    params={
-                        'did':addon.getSetting('did'),
-                        'lang':lang,    
-                    }
-                    params.update({'sign':getSign(params)})
-                    resp=requests.get(url,headers=hea,params=params).json()
+                    resp = request.get_auth_user()
                     if 'result' in resp:
                         if resp['result']=='ok':
                             login_data=resp
@@ -249,18 +163,7 @@ def logIn():
         login=addon.getSetting('username')
         password=addon.getSetting('password')
         if login!='' and password!='':
-            url=apiURL+'auth/login/email'
-            data={
-                "login": login,
-                "password": password,
-                "remember":"1",
-                "did": addon.getSetting('did'),
-                "lang": lang
-            }
-            data.update({'sign':getSign(data)})
-            HEA={'Content-Type':'application/x-www-form-urlencoded'}
-            HEA.update(hea)
-            resp=requests.post(url,headers=HEA,data=data).json()
+            resp = request.get_auth_login_email(login, password)
             if 'result' in resp:
                 if resp['result']=='ok':
                     login_data=resp
@@ -289,15 +192,7 @@ def logIn():
         xbmcgui.Dialog().notification('Megogo', login_error, xbmcgui.NOTIFICATION_INFO)
 
 def logOut():
-    url=apiURL+'auth/logout'
-    params={
-        'lang':lang,
-        'did':addon.getSetting('did')
-    }
-    if addon.getSetting('logged')=='true':
-        params['access_token']=addon.getSetting('access_token')
-    params.update({'sign':getSign(params)})
-    resp=req('get',url,hea,params,getCookies())
+    resp = request.get_auth_logout()
     if 'result' in resp:
         xbmcgui.Dialog().notification('Megogo', translate(30103), xbmcgui.NOTIFICATION_INFO)
         addon.setSetting('access_token','')
@@ -324,14 +219,8 @@ def paraLogOut():
     xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo/,replace)')
 
 def refresh_tokens():
-    url=apiURL+'auth/user_token'
-    params={
-        'user_id':addon.getSetting('user_id'),
-        'lang':lang,
-        'did':addon.getSetting('did')
-    }
-    params.update({'sign':getSign(params)})
-    resp=requests.get(url,headers=hea,params=params).json()
+    user_id = addon.getSetting('user_id')
+    resp = request.get_auth_user_token(user_id)
     refreshed=False
     if 'result' in resp:
         if resp['result']=='ok':
@@ -347,25 +236,6 @@ def refresh_tokens():
         xbmc.log('@@@Błąd refresh_tokens: '+str(resp), level=xbmc.LOGINFO)
         paraLogOut()
         return False
-def req(type,u,h,p,c,d={}):
-    if addon.getSetting('logged')=='true':
-        now=int(time.time())
-        tokenExpTime=int(addon.getSetting('access_token_exp'))
-        if tokenExpTime-now<=10*60:
-            if not refresh_tokens():
-                return
-            else:
-                c=getCookies()
-                p['access_token']=addon.getSetting('access_token')
-                del p['sign']
-                p['sign']=getSign(p)
-    
-    if type=='get':
-        resp=requests.get(u,headers=h,params=p,cookies=c).json()
-    elif type=='post':
-        resp=requests.post(u,headers=h,params=p,cookies=c,json=d).json()
-    
-    return resp
 
 def main_menu():
     sources=[
@@ -386,14 +256,7 @@ def main_menu():
     xbmcplugin.endOfDirectory(addon_handle)
 
 def channels(groups=False): #helper
-    url=apiURL+'tv/channels' if not groups else apiURL+'tv/channels/grouped'
-    params={
-        'lang':lang,
-    }
-    if addon.getSetting('logged')=='true':
-        params['access_token']=addon.getSetting('access_token')
-    params.update({'sign':getSign(params)})
-    resp=req('get',url,hea,params,getCookies())
+    resp = request.get_tv_channels() if not groups else request.get_tv_channels_grouped()
     if 'result' in resp:
         chans=resp['data']['channels'] if not groups else resp['data']['channel_groups']
     else:
@@ -464,34 +327,14 @@ def calendar(cid):
     xbmcplugin.endOfDirectory(addon_handle)
 
 def getEPG(cid,ts,te):
-    url=apiURL+'epg'
-    params={
-        'channel_id':cid,
-        'from':ts,
-        'to':te,
-        'lang':lang,
-    }
-    if addon.getSetting('logged')=='true':
-        params['access_token']=addon.getSetting('access_token')
-    params.update({'sign':getSign(params)})
-    resp=req('get',url,hea,params,getCookies())
+    resp = request.get_epg(cid, ts, te)
     progs=resp['data'][0]['programs']
     return progs
 
 def epgLive(c):
     since=int(time.time())
     till=since+8*60*60
-    url=apiURL+'epg'
-    params={
-        'channel_id':c,
-        'from':str(since),
-        'to':str(till),
-        'lang':lang,
-    }
-    if addon.getSetting('logged')=='true':
-        params['access_token']=addon.getSetting('access_token')
-    params.update({'sign':getSign(params)})
-    resp=req('get',url,hea,params,getCookies())
+    resp = request.get_epg(c, str(since), str(till))
     chans=resp['data']
     epg={}
     for c in chans:
@@ -541,31 +384,11 @@ def programList(cid,d):
 
 def playSource(c,vid=None,vod=False,vodChan=False):
     if vid==None: #live channels/VOD
-        url=apiURL+'stream'
-        params={
-            'video_id':c,
-            'lang':lang,
-            'did':addon.getSetting('did')
-        }
+        resp = request.get_stream(c, None)
     elif vodChan: #vod channels
-        url=apiURL+'stream'
-        params={
-            'video_id':vid,
-            'object_id':c,
-            'lang':lang,
-            'did':addon.getSetting('did')
-        }   
+        resp = request.get_stream(vid, c)
     else: #replay
-        url=apiURL+'stream/virtual'
-        params={
-            'video_id':c,
-            'virtual_id':vid,
-            'lang':lang
-        }
-    if addon.getSetting('logged')=='true':
-        params['access_token']=addon.getSetting('access_token')
-    params.update({'sign':getSign(params)})    
-    resp=req('get',url,hea,params,getCookies())
+        resp = request.get_stream_virtual(c, vid)
 
     streamData=resp['data']
     if addon.getSetting('manualSelectedBitrate')=='false':
@@ -712,22 +535,7 @@ def vod():
 def vodSubcategs(categ):
     category_id,group_id=categ.split('|')
     if group_id!='0':
-        url=apiURL+'featured/group/extended'
-        params={
-            'group_id':group_id,
-            'required':'1',
-            'promo_category_id':category_id,
-            'req_feat_size':'1',
-            'object_types':vods[categ]['types'],
-            'video_limit':'100',
-            'vod':'subscription,free,single',
-            'paging_strategy':'token',
-            'lang':lang
-        }
-        if addon.getSetting('logged')=='true':
-            params['access_token']=addon.getSetting('access_token')
-        params.update({'sign':getSign(params)})
-        resp=req('get',url,hea,params,getCookies())
+        resp = request.get_featured_group_extended(group_id, category_id, vods[categ]['types'])
         saveF(PATH_profile+'vod.txt',str(resp['data']['group']['sub_featured']))
 
         for r in resp['data']['group']['sub_featured']:
@@ -795,47 +603,14 @@ def vodList(scid,categ,page):
             data=[d for d in ex if d['id']==int(scid)][0]
             videos=data['videos']
         else:
-            url=apiURL+'featured/content'
-            params={
-                'limit':'100',
-                'vod':'subscription,free,single',
-                'object_types':vods[categ]['types'],
-                'id':scid,
-                'paging_strategy':'token',
-                'page':page,
-                'lang':lang
-            }
-            if addon.getSetting('logged')=='true':
-                params['access_token']=addon.getSetting('access_token')
-            params.update({'sign':getSign(params)})
-            resp=req('get',url,hea,params,getCookies())
+            resp = request.get_featured_content(scid, vods[categ]['types'], page)
             data=resp['data']
             videos=data['videos']
     else: #katalogi
         addon.setSetting('lastPath',xbmc.getInfoLabel('ListItem.FileNameAndPath'))
-        url=apiURL+'catalog/objects'
-        params={
-            'sort':'popular', #do ustawień
-            'category_id':categ.split('|')[0],
-            #'limit':'100',
-            #'vod':'subscription,free,single',
-            #'page':page,
-            'lang':lang
-        }
-        
-        #uwzględnienie filtrów
-        fltrs=addon.getSetting('filters')
-        if fltrs!='':
-            fltrs=eval(fltrs)
-            for f in list(fltrs):
-                params[f]=fltrs[f]['val']
-                
-        if page!=None:
-            params['page']=page
-        if addon.getSetting('logged')=='true':
-            params['access_token']=addon.getSetting('access_token')
-        params.update({'sign':getSign(params)})
-        resp=req('get',url,hea,params,getCookies())
+        fltrs = addon.getSetting('filters')
+        fltrs = list(eval(fltrs)) if fltrs != '' else []
+        resp = request.get_catalog_objects(categ.split('|')[0], fltrs, page)
         data=[g for g in resp['data']['groups'] if g['content_type']=='video']
         if len(data)>0:
             videos=data[0]['videos']
@@ -864,15 +639,7 @@ def vodList(scid,categ,page):
     xbmcplugin.endOfDirectory(addon_handle)
 
 def seasonList(vid):
-    url=apiURL+'video/info'
-    params={
-        'id':vid,
-        'lang':lang
-    }
-    if addon.getSetting('logged')=='true':
-        params['access_token']=addon.getSetting('access_token')
-    params.update({'sign':getSign(params)})
-    resp=req('get',url,hea,params,getCookies())
+    resp = request.get_video_info(vid)
     saveF(PATH_profile+'serial.txt',str(resp['data']['season_list']))
     data=resp['data']
     img=data['image']['original']
@@ -915,16 +682,7 @@ def epList(sid):
 def search():
     qry=xbmcgui.Dialog().input(u'%s:'%(translate(30111)), type=xbmcgui.INPUT_ALPHANUM)
     if qry:
-        url=apiURL+'search/extended'
-        params={
-            'text':qry,
-            'paging_strategy':'token',
-            'lang':lang
-        }
-        if addon.getSetting('logged')=='true':
-            params['access_token']=addon.getSetting('access_token')
-        params.update({'sign':getSign(params)})
-        resp=req('get',url,hea,params,getCookies())
+        resp = request.get_search_extended(qry)
         saveF(PATH_profile+'search.txt',str(resp['data']))
         for r in resp['data']['group_order']:   
             if r!='person':
@@ -943,18 +701,7 @@ def searchRes(c,qry,page=None):
     else: #kolejne strony
         data=eval(openF(PATH_profile+'conf.txt'))
         group_id=[str(g['id']) for g in data['search_groups'] if g['type']==c][0]
-        url=apiURL+'search/extended'
-        params={
-            'text':qry,
-            'group_id':group_id,
-            'paging_strategy':'token',
-            'page':page,
-            'lang':lang
-        }
-        if addon.getSetting('logged')=='true':
-            params['access_token']=addon.getSetting('access_token')
-        params.update({'sign':getSign(params)})
-        resp=req('get',url,hea,params,getCookies())
+        resp = request.get_search_extended(qry, group_id, page)
         data=resp['data']['groups'][c.lower()]
 
     for i in data['items']:
@@ -1017,15 +764,7 @@ def searchRes(c,qry,page=None):
     xbmcplugin.endOfDirectory(addon_handle)
 
 def details(vid):
-    url=apiURL+'video/info'
-    params={
-        'id':vid,
-        'lang':lang
-    }
-    if addon.getSetting('logged')=='true':
-        params['access_token']=addon.getSetting('access_token')
-    params.update({'sign':getSign(params)})
-    resp=req('get',url,hea,params,getCookies())
+    resp = request.get_video_info(vid)
     v=resp['data']
 
     title=v['title']
@@ -1075,15 +814,8 @@ def catalogFltrs():
 
     setFilters=addon.getSetting('filters')
     setFltrs=eval(setFilters) if setFilters!='' else {}
-    url=apiURL+'catalog/filters'
-    params={
-        'lang':lang,
-        'show_title':'true'
-    }
-    if addon.getSetting('logged')=='true':
-        params['access_token']=addon.getSetting('access_token')
-    params.update({'sign':getSign(params)})
-    resp=req('get',url,hea,params,getCookies())
+
+    resp = request.get_catalog_filters()
     saveF(PATH_profile+'filters.txt',str(resp['data']['filter_by']))
     for r in resp['data']['filter_by']:
         if r['id'] not in ['category_id','finger_language']:
@@ -1126,10 +858,11 @@ def fltrClear():
 mode = params.get('mode', None)
 
 if not mode:
-    did=addon.getSetting('did')
-    if did=='' or did==None:
-        addon.setSetting('did','ANDROIDTV'+code_gen(10,True)+'__'+code_gen(16))
-        addon.setSetting('adid','%s-%s-%s-%s-%s'%(code_gen(8),code_gen(4),code_gen(4),code_gen(4),code_gen(12)))
+    if not device_id:
+        device_id = 'ANDROIDTV'+code_gen(10,True)+'__'+code_gen(16)
+        addon.setSetting('did', device_id)
+        addon.setSetting('adid', '%s-%s-%s-%s-%s'%(code_gen(8),code_gen(4),code_gen(4),code_gen(4),code_gen(12)))
+        request.device_id = device_id
 
     now=int(time.time())
     confUpdt=addon.getSetting('confUpdt')
