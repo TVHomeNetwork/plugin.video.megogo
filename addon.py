@@ -60,7 +60,6 @@ def getCookies():
             'rememberme_token':addon.getSetting('remember_me_token')
         }
     return cookies
-
 def openF(u):
     try:
         f=open(u,'r',encoding = 'utf-8')
@@ -69,7 +68,7 @@ def openF(u):
     cont=f.read()
     f.close()
     return cont
-    
+
 def saveF(u,t):
     with open(u, 'w', encoding='utf-8') as f:
         f.write(t)
@@ -89,8 +88,6 @@ def getSign(p):
     sHash=hashlib.md5(s.encode('utf-8')).hexdigest()
     sHash+=apis[isDRM][1] #public_key
     return sHash
-    
-
 def build_url(query):
     return base_url + '?' + urlencode(query)
 
@@ -106,7 +103,7 @@ def addItemList(url, name, setArt, medType=False, infoLab={}, isF=True, isPla='f
             if medType!=False:
                 setMedType=getattr(li,types[medType])
                 vi=setMedType()
-            
+
                 labels={
                     'year':'setYear', #int
                     'episode':'setEpisode', #int
@@ -129,12 +126,12 @@ def addItemList(url, name, setArt, medType=False, infoLab={}, isF=True, isPla='f
                     'mediatype':'setMediaType',
                     'cast':'setCast', #list        
                 }
-                
+
                 if 'cast' in infoLab:
                     if infoLab['cast']!=None:
                         cast=[xbmc.Actor(c) for c in infoLab['cast']]
                         infoLab['cast']=cast
-                
+
                 for i in list(infoLab):
                     if i in list(labels):
                         setLab=getattr(vi,labels[i])
@@ -156,7 +153,6 @@ def configure():
     saveF(PATH_profile+'conf.txt',str(resp['data']))
 
 def logIn():
-    
     url=apiURL+'anon/user_token'
     params={
         'did':addon.getSetting('did'),
@@ -165,7 +161,6 @@ def logIn():
     params.update({'sign':getSign(params)})
     resp=requests.get(url,headers=hea,params=params).json()
     accessKey=resp['data']['extra']['access_key']
-    
     url='http://et.megogo.net/v5/tracker/init/'+accessKey
     data={
         "additional": {
@@ -199,7 +194,6 @@ def logIn():
     HEA={'content-type':'application/json; charset=UTF-8','connection':'Keep-Alive'}
     HEA.update(hea)
     resp=requests.post(url,headers=HEA,json=data)
-    
     url='http://et.megogo.net/v5/tracker/page_view/'+accessKey
     data={
         "event_created_client_ts": int(time.time()*1000),
@@ -208,10 +202,9 @@ def logIn():
         }
     }
     resp=requests.post(url,headers=HEA,json=data)
-    
     login_data=None
     logged=False
-    
+
     loginMeth=addon.getSetting('loginMeth')
     if loginMeth=='via code':
         url=apiURL+'device/code'
@@ -243,7 +236,6 @@ def logIn():
                     else:
                         login_error=translate(30115)
                         xbmc.log('@@@Błąd logowania: '+str(resp), level=xbmc.LOGINFO)
-                            
                 else:
                     login_error=translate(30114)
                     xbmc.log('@@@Błąd logowania: Nie wciśnięto OK', level=xbmc.LOGINFO)
@@ -253,14 +245,10 @@ def logIn():
         else:
             login_error=translate(30113)
             xbmc.log('@@@Błąd logowania: '+str(resp), level=xbmc.LOGINFO)
-                        
     elif loginMeth=='via e-mail':
-    
         login=addon.getSetting('username')
         password=addon.getSetting('password')
-        
         if login!='' and password!='':
-
             url=apiURL+'auth/login/email'
             data={
                 "login": login,
@@ -282,7 +270,6 @@ def logIn():
             else:
                 login_error=translate(30116)
                 xbmc.log('@@@Błąd logowania: '+str(resp), level=xbmc.LOGINFO)
-            
         else:
             login_error=translate(30102)
             xbmc.log('@@@Błąd logowania: brak danych logowania w ustawieniach wtyczki', level=xbmc.LOGINFO)
@@ -295,12 +282,12 @@ def logIn():
         addon.setSetting('user_id',str(resp['data']['user']['user_id']))
         addon.setSetting('logged','true')
         logged=True
-            
+
     if logged:
         xbmcgui.Dialog().notification('Megogo', translate(30100), xbmcgui.NOTIFICATION_INFO)
     else:
         xbmcgui.Dialog().notification('Megogo', login_error, xbmcgui.NOTIFICATION_INFO)
-    
+
 def logOut():
     url=apiURL+'auth/logout'
     params={
@@ -323,7 +310,7 @@ def logOut():
         #xbmcgui.Dialog().notification('Megogo', 'Błąd wylogowania', xbmcgui.NOTIFICATION_INFO)
         xbmc.log('@@@Błąd wylogowania: '+str(resp), level=xbmc.LOGINFO)
         paraLogOut()
-        
+
 def paraLogOut():
     xbmc.log('@@@ParaLogOut', level=xbmc.LOGINFO)
     xbmcgui.Dialog().notification('Megogo', translate(30103), xbmcgui.NOTIFICATION_INFO)
@@ -337,7 +324,6 @@ def paraLogOut():
     xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo/,replace)')
 
 def refresh_tokens():
-
     url=apiURL+'auth/user_token'
     params={
         'user_id':addon.getSetting('user_id'),
@@ -361,7 +347,6 @@ def refresh_tokens():
         xbmc.log('@@@Błąd refresh_tokens: '+str(resp), level=xbmc.LOGINFO)
         paraLogOut()
         return False
-    
 def req(type,u,h,p,c,d={}):
     if addon.getSetting('logged')=='true':
         now=int(time.time())
@@ -381,8 +366,7 @@ def req(type,u,h,p,c,d={}):
         resp=requests.post(u,headers=h,params=p,cookies=c,json=d).json()
     
     return resp
-    
-    
+
 def main_menu():
     sources=[
         [translate(30001),'live','DefaultTVShows.png'],
@@ -415,7 +399,7 @@ def channels(groups=False): #helper
     else:
         chans=[]
     return chans
-    
+
 def liveCategs():
     groups=channels(True)
     for r in groups:
@@ -434,35 +418,35 @@ def tvList(type,gid=None):
     else:
         chansData=channels(True)
         chans=[g['objects'] for g in chansData if g['type_id']==int(gid)][0]
-    
+
     if type=='live':
         chanIDs=','.join([str(c['id']) for c in chans])
         epg=epgLive(chanIDs)
-            
+
     for c in chans:
         img=c['image']['original']
         title=c['title']
         cid=str(c['id'])
-        
+
         if type=='live':
             isFolder=False
             isPlayable='true'
             URL=build_url({'mode':'playSource','cid':str(c['id'])})
             show=True if c['vod_channel']==False and c['is_available'] else False
             plot=epg[cid]
-            
+
         elif type=='replay':
             isFolder=True
             isPlayable='false'
             URL=build_url({'mode':'calendar','cid':str(c['id'])})
             show=True if (c['is_dvr'] or c['vod_channel']) and c['is_available'] else False
             plot=''
-                
+
         setArt={'thumb': img, 'poster': img, 'banner': img, 'icon': img, 'fanart': img}
         iL={'title': title,'sorttitle': title,'plot': plot}
         if show:
             addItemList(URL, title, setArt, 'video', iL, isFolder, isPlayable)
-    
+
     xbmcplugin.addSortMethod(handle=addon_handle,sortMethod=xbmcplugin.SORT_METHOD_NONE)
     xbmcplugin.addSortMethod(handle=addon_handle,sortMethod=xbmcplugin.SORT_METHOD_TITLE)
     xbmcplugin.endOfDirectory(addon_handle)
@@ -472,11 +456,11 @@ def calendar(cid):
     now=datetime.datetime.now()
     for i in range(0,days+1):
         date=(now-datetime.timedelta(days=i*1)).strftime('%Y-%m-%d')
-       
+
         setArt={'icon': 'DefaultYear.png','fanart':fanart}
         url=build_url({'mode':'programList','cid':cid,'date':date})
         addItemList(url, date, setArt)
-        
+
     xbmcplugin.endOfDirectory(addon_handle)
 
 def getEPG(cid,ts,te):
@@ -493,7 +477,7 @@ def getEPG(cid,ts,te):
     resp=req('get',url,hea,params,getCookies())
     progs=resp['data'][0]['programs']
     return progs
-    
+
 def epgLive(c):
     since=int(time.time())
     till=since+8*60*60
@@ -519,8 +503,7 @@ def epgLive(c):
             e+='[B]%s[/B] %s\n'%(since,title)
         epg[cid]=e
     return epg
-    
-    
+
 def programList(cid,d):
     now=time.time()
     ts=datetime.datetime(*(time.strptime(d, "%Y-%m-%d")[0:6])).timestamp()
@@ -541,18 +524,18 @@ def programList(cid,d):
                 img=e['pictures']['original']
             except:
                 img=img_empty
-            
+
             if 'virtual_object_id' in e:
                 vid=e['virtual_object_id']
                 url=build_url({'mode':'playReplay','vid':str(vid),'cid':cid})
             elif 'object_id' in e:
                 vid=e['object_id']
                 url=build_url({'mode':'playVODchan','vid':str(vid),'cid':cid})
-            
+
             setArt={'thumb': img, 'poster': img, 'banner': img, 'icon': img, 'fanart': fanart}
             iL={'title': title,'sorttitle': title,'plot': desc}
             addItemList(url, name, setArt, 'video', iL, isF=False, isPla='true')
-    
+
     xbmcplugin.setContent(addon_handle, 'videos')
     xbmcplugin.endOfDirectory(addon_handle)
 
@@ -583,7 +566,7 @@ def playSource(c,vid=None,vod=False,vodChan=False):
         params['access_token']=addon.getSetting('access_token')
     params.update({'sign':getSign(params)})    
     resp=req('get',url,hea,params,getCookies())
-    
+
     streamData=resp['data']
     if addon.getSetting('manualSelectedBitrate')=='false':
         #stream_url=streamData['src'] #manifest combo
@@ -609,7 +592,7 @@ def playSource(c,vid=None,vod=False,vodChan=False):
                 lic_url=streamData['bitrates'][-1]['license_server']
             else:
                 lic_url=None
-           
+
     if addon.getSetting('audVOD')=='0' and vod and len(streamData['audio_tracks'])>0:
         audsName=[b['display_name'] for b in streamData['audio_tracks']]
         auds=[b['index'] for b in streamData['audio_tracks']]
@@ -620,7 +603,7 @@ def playSource(c,vid=None,vod=False,vodChan=False):
             audID=auds[-1]
         aud_def_ID=[b['index'] for b in streamData['audio_tracks'] if b['is_active']==True][0]
         stream_url=stream_url.replace('/a/%s/' %(aud_def_ID),'/a/%s/' %(audID))
-    
+
     '''
     if ts!=None:
         now=int(time.time())
@@ -641,24 +624,24 @@ def playSource(c,vid=None,vod=False,vodChan=False):
             #licURL=streamData['license_server']+'|'+urlencode(licHEA)+'|R{SSM}|'
             #stream_url=streamData['src']
             licURL=lic_url+'|'+urlencode(licHEA)+'|R{SSM}|'
-        
+
         if not isDRM and addon.getSetting('playerType')=='ffmpeg':
             play_item = xbmcgui.ListItem(path=stream_url)
             play_item.setProperty("IsPlayable", "true")
             xbmcplugin.setResolvedUrl(addon_handle, True, listitem=play_item)
         else:
-        
+
             import inputstreamhelper
-            
+
             PROTOCOL = protocols[protocol]
             DRM = 'com.widevine.alpha'
             is_helper = inputstreamhelper.Helper(PROTOCOL,drm=DRM)
-            
+
             if is_helper.check_inputstream():
-                play_item = xbmcgui.ListItem(path=stream_url)                     
+                play_item = xbmcgui.ListItem(path=stream_url)
                 play_item.setMimeType('application/xml+dash')
                 play_item.setContentLookup(False)
-                play_item.setProperty('inputstream', is_helper.inputstream_addon)        
+                play_item.setProperty('inputstream', is_helper.inputstream_addon)
                 play_item.setProperty("IsPlayable", "true")
                 play_item.setProperty('inputstream.adaptive.manifest_type', PROTOCOL)
                 play_item.setProperty('inputstream.adaptive.stream_headers', 'User-Agent='+UA)
@@ -666,13 +649,12 @@ def playSource(c,vid=None,vod=False,vodChan=False):
                 if isDRM:
                     play_item.setProperty('inputstream.adaptive.license_type', DRM)
                     play_item.setProperty('inputstream.adaptive.license_key', licURL)
-            
+
             xbmcplugin.setResolvedUrl(addon_handle, True, listitem=play_item)
     else:
         xbmcgui.Dialog().notification('Megogo', translate(30106), xbmcgui.NOTIFICATION_INFO)
         xbmcplugin.setResolvedUrl(addon_handle, False, xbmcgui.ListItem())
-    
-    
+
 def listM3U():
     file_name = addon.getSetting('fname')
     path_m3u = addon.getSetting('path_m3u')
@@ -691,7 +673,7 @@ def listM3U():
                 data += '#EXTINF:0 tvg-id="%s" tvg-logo="%s" group-title="Megogo" catchup="append" catchup-source="&s={utc:Y-m-dTH:M:S}&e={utcend:Y-m-dTH:M:S}" catchup-days="7",%s\nplugin://plugin.video.megogo?mode=playSource&cid=%s\n' %(chName,img,chName,cid)
             else:
                 data += '#EXTINF:0 tvg-id="%s" tvg-logo="%s" group-title="Megogo" ,%s\nplugin://plugin.video.megogo?mode=playSource&cid=%s\n' %(chName,img,chName,cid)
-    
+
     f = xbmcvfs.File(path_m3u + file_name, 'w')
     f.write(data)
     f.close()
@@ -701,7 +683,7 @@ def playSourceSC(cid,s,e): #Simple Client catchup
     co=int(addon.getSetting('cuOffset'))
     ts=(datetime.datetime(*(time.strptime(s, "%Y-%m-%dT%H:%M:%S")[0:6]))+datetime.timedelta(hours=co-1)).timestamp()
     te=(datetime.datetime(*(time.strptime(e, "%Y-%m-%dT%H:%M:%S")[0:6]))+datetime.timedelta(hours=co+1)).timestamp()
-    
+
     epg=getEPG(cid,str(int(ts)),str(int(te)))
     progs=[e['virtual_object_id'] for e in epg if 'virtual_object_id' in e and e['start_timestamp']==int(ts)]
     if len(progs)>0:
@@ -719,14 +701,14 @@ vods={
     '9|0':{'name':'TV programs and shows','types':''},
     '22|0':{'name':'Sport','types':''},
 }
-       
+
 def vod():
     for i in list(vods):
         setArt={'icon': 'DefaultAddonVideo.png','fanart':fanart}
-        url = build_url({'mode':'vodSubcategs','categ':i})       
+        url = build_url({'mode':'vodSubcategs','categ':i})
         addItemList(url, vods[i]['name'], setArt)
     xbmcplugin.endOfDirectory(addon_handle)
-    
+
 def vodSubcategs(categ):
     category_id,group_id=categ.split('|')
     if group_id!='0':
@@ -747,12 +729,12 @@ def vodSubcategs(categ):
         params.update({'sign':getSign(params)})
         resp=req('get',url,hea,params,getCookies())
         saveF(PATH_profile+'vod.txt',str(resp['data']['group']['sub_featured']))
-        
+
         for r in resp['data']['group']['sub_featured']:
             if r['content_type']=='video':
                 cid=str(r['id'])
                 title=r['title']
-                
+
                 setArt={'icon': 'DefaultAddonVideo.png','fanart':fanart}
                 url = build_url({'mode':'vodList','scID':cid,'categ':categ})       
                 addItemList(url, title, setArt)
@@ -760,20 +742,20 @@ def vodSubcategs(categ):
     setArt={'icon': 'DefaultAddonVideo.png'}
     url = build_url({'mode':'vodList','scID':'all','categ':categ})       
     addItemList(url, '[B]%s[/B]'%(translate(30008)), setArt)
-    
+
     xbmcplugin.endOfDirectory(addon_handle)
 
 def getAvail(x):#helper
     data={'svod':'subscription','fvod':'free','tvod':'buy','dto':'rent','advod':'free with adv.'}
     return ', '.join([data[i] for i in x ])
-    
+
 def getLabels(x,t):#helper
     #t: video_country_filters, genres
     data=eval(openF(PATH_profile+'conf.txt'))
     result=[]
     for xx in x:
         result.append([d['title'] for d in data[t] if d['id']==xx][0])
-        
+
     return result
 
 def addVideoItem(v): #helper
@@ -800,12 +782,12 @@ def addVideoItem(v): #helper
         isP='false'
         URL=build_url({'mode':'seasonList','vid':vid})
         iL={'title': title,'sorttitle': title,'mpaa':rating,'plotoutline':desc,'plot': desc,'year':year,'genre':genres,'country':countries,'mediatype':'tvshow'}
-    
+
     cmItems=[('[B]Details[/B]','RunPlugin(plugin://plugin.video.megogo?mode=details&vid='+vid+')')]
-    
+
     setArt={'thumb': img, 'poster': img, 'banner': img, 'icon': img, 'fanart':fanart}
     addItemList(URL, title, setArt, 'video', iL, isF, isP, True, cmItems)
-    
+
 def vodList(scid,categ,page):
     if scid!='all':
         if page==None:
@@ -869,8 +851,7 @@ def vodList(scid,categ,page):
             
             URL=build_url({'mode':'catalogRefresh'}) 
             addItemList(URL, '>>> List refresh <<<', setArt, isF=False)
-        
-    
+
     for v in videos:
         addVideoItem(v)
 
@@ -879,7 +860,6 @@ def vodList(scid,categ,page):
         url = build_url({'mode':'vodList','scID':scid,'categ':categ,'page':data['next_page']})  
         addItemList(url, '[B][COLOR=cyan]>>> %s[/COLOR][/B]'%(translate(30020)), setArt)
 
-    
     xbmcplugin.setContent(addon_handle, 'videos')
     xbmcplugin.endOfDirectory(addon_handle)
 
@@ -897,7 +877,7 @@ def seasonList(vid):
     data=resp['data']
     img=data['image']['original']
     plot=data['description']
-        
+
     for r in data['season_list']:
         title=r['title']
         sid=str(r['id'])
@@ -924,14 +904,14 @@ def epList(sid):
         desc=e['description']
         img=e['image']
         
-        iL={'title': title,'sorttitle': title,'plotoutline':desc,'plot': desc,'duration':dur,'season':seas,'episode':ep,'mediatype':'episode'}        
+        iL={'title': title,'sorttitle': title,'plotoutline':desc,'plot': desc,'duration':dur,'season':seas,'episode':ep,'mediatype':'episode'}
         setArt={'thumb': img, 'poster': img, 'banner': img, 'icon': img, 'fanart':''}
         URL=build_url({'mode':'playVOD','vid':vid})
         addItemList(URL, tit, setArt, 'video', iL, False, 'true')
-        
+
     xbmcplugin.setContent(addon_handle, 'videos')
     xbmcplugin.endOfDirectory(addon_handle)
-    
+
 def search():
     qry=xbmcgui.Dialog().input(u'%s:'%(translate(30111)), type=xbmcgui.INPUT_ALPHANUM)
     if qry:
@@ -952,9 +932,8 @@ def search():
                 setArt={'poster':img_addon,'icon': 'OverlayUnwatched.png'}
                 URL=build_url({'mode':'searchRes','categ':r,'query':qry})
                 addItemList(URL, groups[r], setArt)
-    
-        xbmcplugin.endOfDirectory(addon_handle)        
-            
+
+        xbmcplugin.endOfDirectory(addon_handle)
     else:
         main_menu()
 
@@ -964,7 +943,6 @@ def searchRes(c,qry,page=None):
     else: #kolejne strony
         data=eval(openF(PATH_profile+'conf.txt'))
         group_id=[str(g['id']) for g in data['search_groups'] if g['type']==c][0]
-        
         url=apiURL+'search/extended'
         params={
             'text':qry,
@@ -978,11 +956,11 @@ def searchRes(c,qry,page=None):
         params.update({'sign':getSign(params)})
         resp=req('get',url,hea,params,getCookies())
         data=resp['data']['groups'][c.lower()]
-    
+
     for i in data['items']:
         if c=='video':
             addVideoItem(i)
-        
+
         elif c=='program':
             title=i['title']
             now=int(time.time())
@@ -1006,38 +984,37 @@ def searchRes(c,qry,page=None):
                 isF=False
                 isP='false'
                 URL=build_url({'mode':'noPlay'})
-            
+
             setArt={'icon': img}
             addItemList(URL, tit, setArt, 'video', {}, isF, isP)
-            
+
         elif c=='TV':
             img=i['image']['original']
             title=i['title']
             cid=str(i['id'])
             avail=True if i['vod_channel']==False and i['is_available'] else False
-            
+
             if avail:
                 isF=False
                 isP='true'
                 URL=build_url({'mode':'playSource','cid':cid})
-                
+
             else:
                 title='[COLOR=gray]%s[/COLOR]'%(title)
                 isF=False
                 isP='false'
                 URL=build_url({'mode':'noPlay'})
-                
+
             setArt={'icon': img}
             addItemList(URL, title, setArt, 'video', {}, isF, isP)
-            
+
     if 'next_page' in data:
         setArt={'thumb': '', 'poster': '', 'banner': '', 'icon': img_empty, 'fanart':''}
-        url = build_url({'mode':'searchRes','categ':c,'query':qry,'page':data['next_page']})  
-        addItemList(url, '[B][COLOR=cyan]>>> %s[/COLOR][/B]'%(translate(30020)), setArt) 
-    
+        url = build_url({'mode':'searchRes','categ':c,'query':qry,'page':data['next_page']})
+        addItemList(url, '[B][COLOR=cyan]>>> %s[/COLOR][/B]'%(translate(30020)), setArt)
+
     xbmcplugin.setContent(addon_handle, 'videos')
     xbmcplugin.endOfDirectory(addon_handle)
-    
 
 def details(vid):
     url=apiURL+'video/info'
@@ -1050,7 +1027,7 @@ def details(vid):
     params.update({'sign':getSign(params)})
     resp=req('get',url,hea,params,getCookies())
     v=resp['data']
-    
+
     title=v['title']
     origTitle=v['title_original']
     vidType=v['video_type']
@@ -1066,7 +1043,7 @@ def details(vid):
     year=v['year']
     dur=v['duration'] if 'duration' in v else 0
     desc=v['description']
-    
+
     plot='[B]%s[/B] (%s)'%(title,origTitle)+'\n'
     plot+='[COLOR=yellow][B]%s[/B][/COLOR]\n'%(vidType)
     plot+='[B]%s: [/B]%s\n'%(translate(30009),year)
@@ -1079,10 +1056,10 @@ def details(vid):
     if dur!=0:
         plot+='[B]%s: [/B]%s min.\n'%(translate(30016),str(int(dur/60)))
     plot+='\n%s\n'%(desc)    
-       
+
     if plot=='':
         plot=translate(30017)
-    
+
     dialog = xbmcgui.Dialog()
     dialog.textviewer('%s:'%(translate(30018)), plot)
 
@@ -1093,12 +1070,11 @@ def catalogFltrs():
     for i in items:
         title='<<< %s >>>'%(i[0])
         setArt={'thumb': '', 'poster': '', 'banner': '', 'icon': 'DefaultTags.png', 'fanart':''}
-        url = build_url({'mode':i[1]})  
-        addItemList(url, title, setArt, isF= False, isPla='false') 
-    
+        url = build_url({'mode':i[1]})
+        addItemList(url, title, setArt, isF= False, isPla='false')
+
     setFilters=addon.getSetting('filters')
     setFltrs=eval(setFilters) if setFilters!='' else {}
-    
     url=apiURL+'catalog/filters'
     params={
         'lang':lang,
@@ -1114,17 +1090,17 @@ def catalogFltrs():
             title=r['title']
             if r['id'] in setFltrs:
                 title +=': [I]%s[/I]'%(setFltrs[r['id']]['lab'])
-            
+
             setArt={'thumb': '', 'poster': '', 'banner': '', 'icon': 'DefaultTags.png', 'fanart':''}
             url = build_url({'mode':'fltrSet','fid':r['id']})  
             addItemList(url, title, setArt, isF= False, isPla='false') 
-    
+
     xbmcplugin.endOfDirectory(addon_handle)
 
 def fltrSet(fid):
     fltrs=eval(openF(PATH_profile+'filters.txt'))
     fltr=[f for f in fltrs if f['id']==fid][0]
-    
+
     if fltr['multichoice']:
         select = xbmcgui.Dialog().multiselect('%s:'%(translate(30112)), [f['title'] for f in fltr['items']])
         if len(select)>0:
@@ -1132,7 +1108,7 @@ def fltrSet(fid):
             setFltrs=eval(setFilters) if setFilters!='' else {}
             setFltrs[fid]={'val':','.join([fltr['items'][s]['id'] for s in select]),'lab':','.join([fltr['items'][s]['title'] for s in select])}
             addon.setSetting('filters',str(setFltrs))
-            
+
     else:
         select = xbmcgui.Dialog().select('%s:'%(translate(30112)), [f['title'] for f in fltr['items']])
         if select > -1:
@@ -1140,14 +1116,13 @@ def fltrSet(fid):
             setFltrs=eval(setFilters) if setFilters!='' else {}
             setFltrs[fid]={'val':fltr['items'][select]['id'],'lab':fltr['items'][select]['title']}
             addon.setSetting('filters',str(setFltrs))
-            
+
     xbmc.executebuiltin('Container.Refresh')
-    
+
 def fltrClear():
     setFilters=addon.setSetting('filters','')
     xbmc.executebuiltin('Container.Refresh')
-    
-    
+
 mode = params.get('mode', None)
 
 if not mode:
@@ -1155,7 +1130,7 @@ if not mode:
     if did=='' or did==None:
         addon.setSetting('did','ANDROIDTV'+code_gen(10,True)+'__'+code_gen(16))
         addon.setSetting('adid','%s-%s-%s-%s-%s'%(code_gen(8),code_gen(4),code_gen(4),code_gen(4),code_gen(12)))
-    
+
     now=int(time.time())
     confUpdt=addon.getSetting('confUpdt')
     if confUpdt=='':
@@ -1163,33 +1138,33 @@ if not mode:
     if now-int(confUpdt)>=6*60*60:
         configure()
         addon.setSetting('confUpdt',str(now))
-    
+
     main_menu()
 else:
     if mode=='live' or mode=='replay':
         tvList(mode)
-    
+
     if mode=='tvList':
         gid=params.get('gid')
         tvList('live',gid)
-    
+
     if mode=='liveCategs':
         liveCategs()
-           
+
     if mode=='calendar':
         cid=params.get('cid')
         calendar(cid)
-        
+
     if mode=='programList':
         cid=params.get('cid')
         date=params.get('date')
         programList(cid,date)
-        
+
     if mode=='playReplay':
         cid=params.get('cid')
         vid=params.get('vid')
         playSource(cid,vid)
-    
+
     if mode=='playSource':
         cid=params.get('cid')
         s=params.get('s')
@@ -1198,47 +1173,47 @@ else:
             playSourceSC(cid,s,e)
         else:
             playSource(cid)
-    
+
     if mode=='listM3U':
         listM3U()
-    
+
     if mode=='vod':
         vod()
-     
+
     if mode=='vodSubcategs':
         categ=params.get('categ')
         vodSubcategs(categ)
-    
+
     if mode=='vodList':
         scID=params.get('scID')
         page=params.get('page')
         categ=params.get('categ')
         vodList(scID,categ,page)
-    
+
     if mode=='seasonList':
         vid=params.get('vid')
         seasonList(vid)
-    
+
     if mode=='epList':
         sid=params.get('sid')
         epList(sid)
-    
+
     if mode=='search':
         search()
-    
+
     if mode=='searchRes':
         categ=params.get('categ')
         qry=params.get('query')
         page=params.get('page')
         searchRes(categ,qry,page)
-    
+
     if mode=='noPlay':
         pass
-        
+
     if mode=='details':
         vid=params.get('vid')
         details(vid)
-    
+
     if mode=='playVOD':
         vid=params.get('vid')
         playSource(vid,None,True)
@@ -1251,26 +1226,25 @@ else:
         logIn()
         xbmcplugin.endOfDirectory(addon_handle, cacheToDisc=False)
         xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo/,replace)')
-            
+
     if mode=='logOut':
         logOut()
         if addon.getSetting('logged')=='false':
             xbmcplugin.endOfDirectory(addon_handle, cacheToDisc=False)
             xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo/,replace)')
-    
+
     if mode=='catalogFltrs':
         catalogFltrs()
-        
+
     if mode=='fltrSet':
         fid=params.get('fid')
         fltrSet(fid)
-        
+
     if mode=='fltrClear':
         fltrClear()
-    
+
     if mode=='fltrApply':
         fltrApply()
-            
+
     if mode=='catalogRefresh':
         xbmc.executebuiltin('Container.Refresh')
-        
