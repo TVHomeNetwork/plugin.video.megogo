@@ -683,9 +683,9 @@ def search():
     if qry:
         resp = request.get_search_extended(qry)
         saveF(PATH_profile+'search.txt',str(resp['data']))
+        groups={'TV':'TV Channels','video':'Videos','program':'On TV'}
         for r in resp['data']['group_order']:   
-            if r!='person':
-                groups={'TV':'TV Channels','video':'Videos','program':'On TV'}
+            if r in groups:
                 setArt={'poster':img_addon,'icon': 'OverlayUnwatched.png'}
                 URL=build_url({'mode':'searchRes','categ':r,'query':qry})
                 addItemList(URL, groups[r], setArt)
