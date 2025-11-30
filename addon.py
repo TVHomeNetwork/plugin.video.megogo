@@ -117,74 +117,72 @@ def configure():
 
 def logIn():
     resp = request.get_anon_user_token()
-    accessKey=resp['data']['extra']['access_key']
+    accessKey = resp['data']['extra']['access_key']
+    request.get_tracker_init(accessKey, addon.getSetting('geoZone'))
+    request.get_tracker_page_view(accessKey)
 
-    resp = request.get_tracker_init(accessKey, addon.getSetting('geoZone'))
-
-    resp = request.get_tracker_page_view(accessKey)
-
-    login_data=None
-    logged=False
-
-    loginMeth=addon.getSetting('loginMeth')
-    if loginMeth=='via code':
-        device_name = 'Device_'+code_gen(3,True)
+    login_data = None
+    loginMeth = addon.getSetting('loginMeth')
+    if loginMeth == 'via code':
+        device_name = 'Device_' + code_gen(3,True)
         resp = request.get_device_code(device_name)
-        if 'result' in resp:
-            if resp['result']=='ok':
-                code=resp['data']['code']
-                ok=xbmcgui.Dialog().ok("Login", translate(30021).format(c='[COLOR=yellow][B]%s[/B][/COLOR]'%(code)))
-                if ok:
-                    resp = request.get_auth_user()
-                    if 'result' in resp:
-                        if resp['result']=='ok':
-                            login_data=resp
-                        else:
-                            login_error=translate(30115)
-                            xbmc.log('@@@Błąd logowania: '+str(resp), level=xbmc.LOGINFO)
-                    else:
-                        login_error=translate(30115)
-                        xbmc.log('@@@Błąd logowania: '+str(resp), level=xbmc.LOGINFO)
-                else:
-                    login_error=translate(30114)
-                    xbmc.log('@@@Błąd logowania: Nie wciśnięto OK', level=xbmc.LOGINFO)
-            else:
-                login_error=translate(30113)
-                xbmc.log('@@@Błąd logowania: '+str(resp), level=xbmc.LOGINFO)
-        else:
-            login_error=translate(30113)
-            xbmc.log('@@@Błąd logowania: '+str(resp), level=xbmc.LOGINFO)
-    elif loginMeth=='via e-mail':
-        login=addon.getSetting('username')
-        password=addon.getSetting('password')
-        if login!='' and password!='':
-            resp = request.get_auth_login_email(login, password)
-            if 'result' in resp:
-                if resp['result']=='ok':
-                    login_data=resp
-                else:
-                    login_error=translate(30116)
-                    xbmc.log('@@@Błąd logowania: '+str(resp), level=xbmc.LOGINFO)
-            else:
-                login_error=translate(30116)
-                xbmc.log('@@@Błąd logowania: '+str(resp), level=xbmc.LOGINFO)
-        else:
-            login_error=translate(30102)
-            xbmc.log('@@@Błąd logowania: brak danych logowania w ustawieniach wtyczki', level=xbmc.LOGINFO)
+        if resp.get('result') != 'ok':
+            xbmcgui.Dialog().notification('Megogo', translate(30113), xbmcgui.NOTIFICATION_ERROR)
+            xbmc.log('MegogoLogin: bad get_device_code response: ' + str(resp), level=xbmc.LOGERROR)
+            return
 
-    if login_data!=None:
-        addon.setSetting('access_token',resp['data']['user']['tokens']['access_token'])
-        addon.setSetting('access_token_exp',str(resp['data']['user']['tokens']['access_token_expires_at'])) #6 godzin
-        addon.setSetting('remember_me_token',resp['data']['user']['tokens']['remember_me_token'])
-        addon.setSetting('access_key',resp['data']['user']['extra']['access_key'])
-        addon.setSetting('user_id',str(resp['data']['user']['user_id']))
-        addon.setSetting('logged','true')
-        logged=True
+        code=resp['data']['code']
+        ok = xbmcgui.Dialog().ok("Login", translate(30021).format(c='[COLOR=yellow][B]%s[/B][/COLOR]' % (code)))
+        if not ok:
+            xbmcgui.Dialog().notification('Megogo', translate(30114), xbmcgui.NOTIFICATION_INFO)
+            xbmc.log('MegogoLogin: code registration dialog was closed', level=xbmc.LOGINFO)
+            return
 
-    if logged:
-        xbmcgui.Dialog().notification('Megogo', translate(30100), xbmcgui.NOTIFICATION_INFO)
-    else:
-        xbmcgui.Dialog().notification('Megogo', login_error, xbmcgui.NOTIFICATION_INFO)
+        resp = request.get_auth_user()
+        if resp.get('result') != 'ok':
+            xbmcgui.Dialog().notification('Megogo', translate(30115), xbmcgui.NOTIFICATION_ERROR)
+            xbmc.log('MegogoLogin: bad get_auth_user response: ' + str(resp), level=xbmc.LOGERROR)
+            return
+
+        login_data = resp
+    elif loginMeth == 'via e-mail':
+        login = addon.getSetting('username')
+        if login == '':
+            xbmcgui.Dialog().notification('Megogo', translate(30102), xbmcgui.NOTIFICATION_INFO)
+            xbmc.log('MegogoLogin: input login data in the settings', level=xbmc.LOGINFO)
+            return
+
+        resp = request.get_auth_email(login, 'init')
+        if resp.get('result') != 'ok':
+            xbmcgui.Dialog().notification('Megogo', translate(30115), xbmcgui.NOTIFICATION_ERROR)
+            xbmc.log('MegogoLogin: bad get_auth_email(init) response: ' + str(resp), level=xbmc.LOGERROR)
+            return
+
+        password = xbmcgui.Dialog().input('Enter secret code', type=xbmcgui.INPUT_NUMERIC)
+        if not password:
+            xbmcgui.Dialog().notification('Megogo', translate(30116), xbmcgui.NOTIFICATION_INFO)
+            xbmc.log('MegogoLogin: secret code verification dialog was closed', level=xbmc.LOGINFO)
+            return
+
+        resp = request.get_auth_email(login, 'verify_otp', password)
+        if resp.get('result') != 'ok':
+            xbmcgui.Dialog().notification('Megogo', translate(30115), xbmcgui.NOTIFICATION_ERROR)
+            xbmc.log('MegogoLogin: bad get_auth_email(verify_otp) response: ' + str(resp), level=xbmc.LOGERROR)
+            return
+
+        login_data = resp
+
+    if login_data == None:
+        return
+
+    addon.setSetting('access_token',resp['data']['user']['tokens']['access_token'])
+    addon.setSetting('access_token_exp',str(resp['data']['user']['tokens']['access_token_expires_at'])) #6 godzin
+    addon.setSetting('remember_me_token',resp['data']['user']['tokens']['remember_me_token'])
+    addon.setSetting('access_key',resp['data']['user']['extra']['access_key'])
+    addon.setSetting('user_id',str(resp['data']['user']['user_id']))
+    addon.setSetting('logged','true')
+    xbmcgui.Dialog().notification('Megogo', translate(30100), xbmcgui.NOTIFICATION_INFO)
+    xbmc.executebuiltin('Container.Refresh')
 
 def logOut():
     resp = request.get_auth_logout()
@@ -247,8 +245,11 @@ def main_menu():
     for s in sources:
         setArt={'icon': s[2],'fanart':fanart}
         url = build_url({'mode':s[1],'page':'0'})       
-        addItemList(url, s[0], setArt)
-    xbmcplugin.endOfDirectory(addon_handle)
+        isF = True
+        if 'log' in s[1]:
+            isF = False
+        addItemList(url, s[0], setArt, isF=isF)
+    xbmcplugin.endOfDirectory(addon_handle, cacheToDisc=False)
 
 def channels(groups=False): #helper
     resp = request.get_tv_channels() if not groups else request.get_tv_channels_grouped()
@@ -952,8 +953,6 @@ else:
 
     if mode=='logIn':
         logIn()
-        xbmcplugin.endOfDirectory(addon_handle, cacheToDisc=False)
-        xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo/,replace)')
 
     if mode=='logOut':
         logOut()

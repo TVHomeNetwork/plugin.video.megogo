@@ -69,13 +69,13 @@ class Request:
             return result
 
     def send_api(self, url, params=None, data=None, json=True, ret=True, ret_json=True):
-        if params is not None and self.access_token:
-            params['access_token'] = self.access_token
-
-        if params is not None and self.language:
-            params['lang'] = self.language
-
         params_dict = data if params is None else params
+        if self.access_token and 'auth/refresh' not in url:
+            params_dict['access_token'] = self.access_token
+
+        if self.language:
+            params_dict['lang'] = self.language
+
         if params_dict is not None:
             params_str = ''.join(f'{key}={value}' for key, value in params_dict.items())
             private_key = self.api_keys[self.drm_support][0]
@@ -86,17 +86,18 @@ class Request:
         return self.send(url, params, data, json, ret, ret_json)
 
 # Post requests
-    def get_auth_login_email(self, login, password):
-        url = self.base_api_url.format('auth/login/email')
-        data = {
-            'login' : login,
-            'password' : password,
-            'remember' : '1',
-            'did' : self.device_id
-        }
-        result = self.send_api(url, params=None, data=data)
+    def get_auth_email(self, login, action, password=None):
+        url = self.base_api_url.format('auth/email')
+        data = {}
+        data['login'] = login
+        data['action'] = action
+        if password:
+            data['password'] = password
+        data['remember'] = '1'
+        data['did'] = self.device_id
+        result = self.send_api(url, params=None, data=data, json=False)
         if self.error:
-            xbmc.log("MegogoRequest exception in get_auth_login_email: " + self.error, xbmc.LOGERROR)
+            xbmc.log("MegogoRequest exception in get_auth_email: " + self.error, xbmc.LOGERROR)
             return {}
         return result
 
