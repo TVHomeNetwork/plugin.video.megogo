@@ -834,7 +834,7 @@ def fltrSet(fid):
 
     if fltr['multichoice']:
         select = xbmcgui.Dialog().multiselect('%s:'%(translate(30112)), [f['title'] for f in fltr['items']])
-        if len(select)>0:
+        if select and len(select)>0:
             setFilters=addon.getSetting('filters')
             setFltrs=eval(setFilters) if setFilters!='' else {}
             setFltrs[fid]={'val':','.join([fltr['items'][s]['id'] for s in select]),'lab':','.join([fltr['items'][s]['title'] for s in select])}
