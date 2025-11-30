@@ -247,7 +247,7 @@ def main_menu():
         sources.append([translate(30007),'logOut','DefaultUser.png'])
     for s in sources:
         setArt={'icon': s[2],'fanart':fanart}
-        url = build_url({'mode':s[1],'page':'0'})       
+        url = build_url({'mode':s[1],'page':'0'})
         isF = True
         if 'log' in s[1]:
             isF = False
@@ -267,11 +267,11 @@ def liveCategs():
     for r in groups:
         name=r['type_name']
         gid=str(r['type_id'])
-        
+
         setArt={'icon': 'DefaultTVShows.png','fanart':fanart}
         URL=build_url({'mode':'tvList','gid':gid})
         addItemList(URL, name, setArt)
-        
+
     xbmcplugin.endOfDirectory(addon_handle)
 
 def tvList(type,gid=None):
