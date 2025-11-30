@@ -131,7 +131,7 @@ class Request:
             "is_subscriber" : 0,
             "platform_type" : "android"
         }
-        result = self.send(url, params=None, data=data, ret=False)
+        result = self.send(url, params=None, data=data, ret_json=False)
         if self.error:
             xbmc.log("MegogoRequest exception in get_tracker_init: " + self.error, xbmc.LOGERROR)
             return False
@@ -145,7 +145,7 @@ class Request:
                 "code" : page_code,
             }
         }
-        result = self.send(url, params=None, data=data, ret=False)
+        result = self.send(url, params=None, data=data, ret_json=False)
         if self.error:
             xbmc.log("MegogoRequest exception in get_tracker_page_view: " + self.error, xbmc.LOGERROR)
             return False
