@@ -212,23 +212,26 @@ def paraLogOut():
     xbmc.executebuiltin('Container.Update(plugin://plugin.video.megogo/,replace)')
 
 def refresh_tokens():
-    user_id = addon.getSetting('user_id')
-    resp = request.get_auth_user_token(user_id)
-    refreshed=False
-    if 'result' in resp:
-        if resp['result']=='ok':
-            addon.setSetting('access_token',resp['data']['tokens']['access_token'])
-            addon.setSetting('access_token_exp',str(resp['data']['tokens']['access_token_expires_at']))
-            addon.setSetting('remember_me_token',resp['data']['tokens']['remember_me_token'])
-            addon.setSetting('access_key',resp['data']['extra']['access_key'])
-            refreshed=True
-    if refreshed:
-        xbmc.log('@@@Odświeżono tokeny', level=xbmc.LOGINFO)
-        return True
-    else:
-        xbmc.log('@@@Błąd refresh_tokens: '+str(resp), level=xbmc.LOGINFO)
+    if addon.getSetting('logged') != 'true':
+        return
+
+    now = int(time.time())
+    tokenExpTime = int(addon.getSetting('access_token_exp'))
+    if tokenExpTime - now > 10 * 60:
+        return
+
+    remember_me_token = addon.getSetting('remember_me_token')
+    resp = request.get_auth_refresh(remember_me_token)
+    if resp.get('result') != 'ok':
+        xbmc.log('Megogo: bad get_auth_refresh response: ' + str(resp), level=xbmc.LOGERROR)
         paraLogOut()
-        return False
+        return
+
+    addon.setSetting('access_token',resp['data']['tokens']['access_token'])
+    addon.setSetting('access_token_exp',str(resp['data']['tokens']['access_token_expires_at']))
+    addon.setSetting('remember_me_token',resp['data']['tokens']['remember_me_token'])
+    addon.setSetting('access_key',resp['data']['extra']['access_key'])
+    xbmc.log('Megogo: tokens refreshed', level=xbmc.LOGDEBUG)
 
 def main_menu():
     sources=[
@@ -852,6 +855,7 @@ def fltrClear():
     xbmc.executebuiltin('Container.Refresh')
 
 mode = params.get('mode', None)
+refresh_tokens()
 
 if not mode:
     if not device_id:

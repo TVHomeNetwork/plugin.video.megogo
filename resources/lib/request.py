@@ -200,15 +200,15 @@ class Request:
             return {}
         return result
 
-    def get_auth_user_token(self, user_id):
-        url = self.base_api_url.format('auth/logout')
+    def get_auth_refresh(self, remember_me_token):
+        url = self.base_api_url.format('auth/refresh')
         params = {
-            'user_id' : user_id,
+            'rememberme_token' : remember_me_token,
             'did' : self.device_id
         }
         result = self.send_api(url, params=params)
         if self.error:
-            xbmc.log("MegogoRequest exception in get_auth_user_token: " + self.error, xbmc.LOGERROR)
+            xbmc.log("MegogoRequest exception in get_auth_refresh: " + self.error, xbmc.LOGERROR)
             return {}
         return result
 
