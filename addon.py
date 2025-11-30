@@ -517,9 +517,9 @@ def playSourceSC(cid,s,e): #Simple Client catchup
 #VOD
 
 vods={
-    '16|180476': {'name':'Movies','types':'FILM,FILMSERIAL,FILM3D'},
-    '4|180496': {'name':'Series','types':'SERIAL,SHOW,SHOWFILM'},
-    '6|180486': {'name':'Cartoons','types':'MULTFILM,MULTSERIAL'},
+    '16|0': {'name':'Movies','types':'FILM,FILMSERIAL,FILM3D'},
+    '4|0': {'name':'Series','types':'SERIAL,SHOW,SHOWFILM'},
+    '6|0': {'name':'Cartoons','types':'MULTFILM,MULTSERIAL'},
     '9|0':{'name':'TV programs and shows','types':''},
     '22|0':{'name':'Sport','types':''},
 }
@@ -608,7 +608,7 @@ def vodList(scid,categ,page):
     else: #katalogi
         addon.setSetting('lastPath',xbmc.getInfoLabel('ListItem.FileNameAndPath'))
         fltrs = addon.getSetting('filters')
-        fltrs = list(eval(fltrs)) if fltrs != '' else []
+        fltrs = eval(fltrs) if fltrs != '' else {}
         resp = request.get_catalog_objects(categ.split('|')[0], fltrs, page)
         data=[g for g in resp['data']['groups'] if g['content_type']=='video']
         if len(data)>0:
