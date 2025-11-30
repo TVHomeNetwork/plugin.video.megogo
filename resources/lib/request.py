@@ -13,8 +13,8 @@ class Request:
 
         self.base_api_url = 'https://api.megogo.net/v1/{}'
         self.headers = {
-            'x-client-type' : 'AndroidTV',
-            'x-client-version' : '2.11.6',
+            'x-client-type' : 'Android',
+            'x-client-version' : '5.6.3',
             'user-agent' : 'Dalvik/2.1.0 (Linux; U; Android 14; Unknown sdk_google_atv_x86; Build/UMOD.251113.003)',
             'device-name' : 'Unknown sdk_google_atv_x86',
             'device-model' : 'sdk_google_atv_x86',
@@ -22,8 +22,8 @@ class Request:
         }
 
         self.api_keys = {
-            True : [ 'a3a854fdd3' , '_android_tv_drm_4k_17' ],
-            False : [ '2901c3d95c' , '_android_tv_4k_17' ]
+            True : [ 'b31b4b84c7' , '_android_drm_22' ],
+            False : [ '175664ecff' , '_android_22']
         }
 
         self.error = None
@@ -115,7 +115,7 @@ class Request:
             },
             "device" : {
                 "app_geo" : geo_zone,
-                "app_version" : "2.11.6",
+                "app_version" : "5.6.3",
                 "connection_type" : "wi-fi",
                 "model" : "sdk_google_atv_x86",
                 "os_name" : "android",
@@ -129,7 +129,7 @@ class Request:
             },
             "event_created_client_ts" : int(time.time()*1000),
             "is_subscriber" : 0,
-            "platform_type" : "android_tv"
+            "platform_type" : "android"
         }
         result = self.send(url, params=None, data=data, ret=False)
         if self.error:
