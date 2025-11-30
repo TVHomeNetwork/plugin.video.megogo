@@ -302,7 +302,7 @@ class Request:
         return result
 
     def get_catalog_objects(self, category_id, filters, page=None):
-        url = self.base_api_url.format('featured/content')
+        url = self.base_api_url.format('catalog/objects')
         params = {
             'sort' : 'popular',
             'category_id' : category_id
@@ -318,7 +318,7 @@ class Request:
         return result
 
     def get_catalog_filters(self):
-        url = self.base_api_url.format('featured/filters')
+        url = self.base_api_url.format('catalog/filters')
         params = { 'show_title' : 'true' }
         result = self.send_api(url, params=params)
         if self.error:
