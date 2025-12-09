@@ -1,0 +1,246 @@
+# Kodi Media Center language file
+# Addon Name: Megogo
+# Addon id: plugin.video.megogo
+# Addon Provider: lg
+msgid ""
+msgstr ""
+
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: uk\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "#30001"
+msgid "LIVE TV"
+msgstr "Канали ТБ"
+
+msgctxt "#30002"
+msgid "LIVE TV by category"
+msgstr "Канали ТБ за категоріями"
+
+msgctxt "#30003"
+msgid "Replay TV"
+msgstr "Повтор ТБ"
+
+msgctxt "#30004"
+msgid "VOD"
+msgstr "Відео"
+
+msgctxt "#30005"
+msgid "Search"
+msgstr "Пошук"
+
+msgctxt "#30006"
+msgid "Log in"
+msgstr "Увійти"
+
+msgctxt "#30007"
+msgid "Log out"
+msgstr "Вийти"
+
+msgctxt "#30008"
+msgid "Catalogue"
+msgstr "Каталог"
+
+msgctxt "#30009"
+msgid "Production year"
+msgstr "Рік виходу"
+
+msgctxt "#30010"
+msgid "Countries"
+msgstr "Країни походження"
+
+msgctxt "#30011"
+msgid "Genres"
+msgstr "Жанри"
+
+msgctxt "#30012"
+msgid "Cast"
+msgstr "Акторський склад"
+
+msgctxt "#30013"
+msgid "Age limit"
+msgstr "Вікове обмеження"
+
+msgctxt "#30014"
+msgid "IMDB rating"
+msgstr "Рейтинг IMDB"
+
+msgctxt "#30015"
+msgid "Audio lng"
+msgstr "Мова перекладу"
+
+msgctxt "#30016"
+msgid "Duration"
+msgstr "Тривалість"
+
+msgctxt "#30017"
+msgid "No data"
+msgstr "Немає даних"
+
+msgctxt "#30018"
+msgid "Details"
+msgstr "Деталі"
+
+msgctxt "#30019"
+msgid "Clear filters"
+msgstr "Очистити фільтри"
+
+msgctxt "#30020"
+msgid "Next page"
+msgstr "Наступна сторінка"
+
+msgctxt "#30021"
+msgid "Register the device on megogo.net using the code {c} and then press OK"
+msgstr "Зареєструйте пристрій на megogo.net, використовуючи код {c}, а потім натисніть OK"
+
+#Dialogs
+
+msgctxt "#30100"
+msgid "Logged in"
+msgstr "Ви увійшли до системи"
+
+msgctxt "#30101"
+msgid "Log in error"
+msgstr "Помилка входу"
+
+msgctxt "#30102"
+msgid "Complete account data in settings"
+msgstr "Заповніть дані облікового запису в налаштуваннях"
+
+msgctxt "#30103"
+msgid "Logged out"
+msgstr "Ви вийшли з системи"
+
+msgctxt "#30104"
+msgid "Sources"
+msgstr "Джерела"
+
+msgctxt "#30105"
+msgid "Audio lng"
+msgstr "Мова перекладу"
+
+msgctxt "#30106"
+msgid "Not available"
+msgstr "Недоступно"
+
+msgctxt "#30107"
+msgid "Put file name and path"
+msgstr "Введіть ім'я файлу та шлях"
+
+msgctxt "#30108"
+msgid "M3U list generate in progress"
+msgstr "Триває генерація списку M3U"
+
+msgctxt "#30109"
+msgid "M3U list Generated"
+msgstr "Список M3U згенеровано"
+
+msgctxt "#30110"
+msgid "Program doesn't exist"
+msgstr "Програма не існує"
+
+msgctxt "#30111"
+msgid "Search"
+msgstr "Пошук"
+
+msgctxt "#30112"
+msgid "Category"
+msgstr "Категорія"
+
+msgctxt "#30113"
+msgid "LogIn error: the code was not generated"
+msgstr "Помилка входу: код не згенеровано"
+
+msgctxt "#30114"
+msgid "LogIn error: OK button not pressed"
+msgstr "Помилка входу: кнопка OK не була натиснута"
+
+msgctxt "#30115"
+msgid "LogIn error: error during device registration"
+msgstr "Помилка входу: помилка під час реєстрації пристрою"
+
+msgctxt "#30116"
+msgid "LogIn error: e-mail/pass"
+msgstr "Помилка входу: електронна пошта/пароль"
+
+#settings
+
+msgctxt "#30200"
+msgid "Account data"
+msgstr "Дані облікового запису"
+
+msgctxt "#30201"
+msgid "E-mail"
+msgstr "Електронна пошта"
+
+msgctxt "#30202"
+msgid "Password"
+msgstr "Пароль"
+
+msgctxt "#30203"
+msgid "Zone"
+msgstr "Зона"
+
+msgctxt "#30204"
+msgid "M3U list creator"
+msgstr "Генератор списку M3U"
+
+msgctxt "#30205"
+msgid "File name"
+msgstr "Ім'я файлу"
+
+msgctxt "#30206"
+msgid "Path"
+msgstr "Шлях"
+
+msgctxt "#30207"
+msgid "Create M3U list"
+msgstr "Створити список M3U"
+
+msgctxt "#30208"
+msgid "Player"
+msgstr "Плеєр"
+
+msgctxt "#30209"
+msgid "Select video quality manually"
+msgstr "Вибрати якість відео вручну"
+
+msgctxt "#30210"
+msgid "Audio lang (VOD)"
+msgstr "Мова перекладу (тільки для VOD)"
+
+msgctxt "#30211"
+msgid "Selected manually"
+msgstr "Вибирати вручну"
+
+msgctxt "#30212"
+msgid "Default"
+msgstr "За замовчуванням"
+
+msgctxt "#30213"
+msgid "Player type"
+msgstr "Тип плеєра"
+
+msgctxt "#30214"
+msgid "Time offset - catchup (Simple Client) [in hours]"
+msgstr "Зсув часу - наздоганяння (Simple Client) [у годинах]"
+
+msgctxt "#30215"
+msgid "General"
+msgstr "Загальне"
+
+msgctxt "#30216"
+msgid "Service language"
+msgstr "Мова служби"
+
+msgctxt "#30217"
+msgid "DRM Support"
+msgstr "Підтримка DRM"
+
+msgctxt "#30218"
+msgid "LogIn Method"
+msgstr "Спосіб входу"
