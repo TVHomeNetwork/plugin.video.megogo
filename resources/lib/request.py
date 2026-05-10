@@ -101,6 +101,23 @@ class Request:
             return {}
         return result
 
+    def get_auth_phone(self, phone, action, code=None, send_again=False):
+        url = self.base_api_url.format('auth/phone')
+        data = {}
+        data['login'] = phone
+        data['action'] = action
+        if code:
+            data['verification_code'] = code
+        data['remember'] = '1'
+        if code is None:
+            data['send_new_verification_code'] = str(send_again).lower()
+        data['did'] = self.device_id
+        result = self.send_api(url, params=None, data=data, json=False)
+        if self.error:
+            xbmc.log("MegogoRequest exception in get_auth_phone: " + self.error, xbmc.LOGERROR)
+            return {}
+        return result
+
     def get_tracker_init(self, access_key, geo_zone):
         url = 'http://et.megogo.net/v5/tracker/init/' + access_key
         data = {

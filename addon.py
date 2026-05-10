@@ -154,20 +154,46 @@ def logIn():
 
         resp = request.get_auth_email(login, 'init')
         if resp.get('result') != 'ok':
-            xbmcgui.Dialog().notification('Megogo', translate(30115), xbmcgui.NOTIFICATION_ERROR)
+            xbmcgui.Dialog().notification('Megogo', translate(30117), xbmcgui.NOTIFICATION_ERROR)
             xbmc.log('MegogoLogin: bad get_auth_email(init) response: ' + str(resp), level=xbmc.LOGERROR)
             return
 
         password = xbmcgui.Dialog().input('Enter secret code', type=xbmcgui.INPUT_NUMERIC)
         if not password:
-            xbmcgui.Dialog().notification('Megogo', translate(30116), xbmcgui.NOTIFICATION_INFO)
+            xbmcgui.Dialog().notification('Megogo', translate(30118), xbmcgui.NOTIFICATION_INFO)
             xbmc.log('MegogoLogin: secret code verification dialog was closed', level=xbmc.LOGINFO)
             return
 
         resp = request.get_auth_email(login, 'verify_otp', password)
         if resp.get('result') != 'ok':
-            xbmcgui.Dialog().notification('Megogo', translate(30115), xbmcgui.NOTIFICATION_ERROR)
+            xbmcgui.Dialog().notification('Megogo', translate(30117), xbmcgui.NOTIFICATION_ERROR)
             xbmc.log('MegogoLogin: bad get_auth_email(verify_otp) response: ' + str(resp), level=xbmc.LOGERROR)
+            return
+
+        login_data = resp
+    elif loginMeth == 'via phone':
+        phone = addon.getSetting('phone')
+        if phone == '':
+            xbmcgui.Dialog().notification('Megogo', translate(30102), xbmcgui.NOTIFICATION_INFO)
+            xbmc.log('MegogoLogin: input login data in the settings', level=xbmc.LOGINFO)
+            return
+
+        resp = request.get_auth_phone(phone, 'send')
+        if resp.get('result') != 'ok':
+            xbmcgui.Dialog().notification('Megogo', translate(30117), xbmcgui.NOTIFICATION_ERROR)
+            xbmc.log('MegogoLogin: bad get_auth_phone(send) response: ' + str(resp), level=xbmc.LOGERROR)
+            return
+
+        code = xbmcgui.Dialog().input('Enter secret code', type=xbmcgui.INPUT_NUMERIC)
+        if not code:
+            xbmcgui.Dialog().notification('Megogo', translate(30118), xbmcgui.NOTIFICATION_INFO)
+            xbmc.log('MegogoLogin: secret code verification dialog was closed', level=xbmc.LOGINFO)
+            return
+
+        resp = request.get_auth_phone(phone, 'verify', code)
+        if resp.get('result') != 'ok':
+            xbmcgui.Dialog().notification('Megogo', translate(30117), xbmcgui.NOTIFICATION_ERROR)
+            xbmc.log('MegogoLogin: bad get_auth_phone(verify) response: ' + str(resp), level=xbmc.LOGERROR)
             return
 
         login_data = resp

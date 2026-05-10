@@ -168,6 +168,14 @@ msgctxt "#30116"
 msgid "LogIn error: e-mail/pass"
 msgstr ""
 
+msgctxt "#30117"
+msgid "LogIn error: error sending request to server"
+msgstr ""
+
+msgctxt "#30118"
+msgid "LogIn error: enter the received code"
+msgstr ""
+
 #settings
 
 msgctxt "#30200"
@@ -244,4 +252,8 @@ msgstr ""
 
 msgctxt "#30218"
 msgid "LogIn Method"
+msgstr ""
+
+msgctxt "#30219"
+msgid "Phone number"
 msgstr ""

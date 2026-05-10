@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 	<category label="30200">
-		<setting label="30218" type="select" id="loginMeth" values="via e-mail|via code" default="via e-mail"/>
-		<setting id="username"  type="text" label="30201" default="" />
-		<setting id="password"  type="text" label="30202" option="hidden"  default="" />
+		<setting label="30218" type="select" id="loginMeth" values="via e-mail|via phone|via code" default="via e-mail"/>
+		<setting id="username"  type="text" label="30201" default="" visible="eq(-1,via e-mail)"/>
+		<setting id="password"  type="text" label="30202" option="hidden"  default="" visible="false" />
+		<setting id="phone"  type="text" label="30219" default="" visible="eq(-3,via phone)"/>
 		<setting label="30203" type="select" id="geoZone" values="pl|ua" default="pl"/>
 	</category>
 	<category label="30204">
