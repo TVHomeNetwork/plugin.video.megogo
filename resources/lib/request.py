@@ -43,14 +43,23 @@ class Request:
             else:
                 response = requests.post(url, data=data, headers=self.headers, params=params)
             if ret:
-                result = response.json() if ret_json else response.text
-                if response.status_code != 200:
+                if response.status_code == 200:
+                    result = response.json() if ret_json else response.text
+                else:
+                    try:
+                        result = response.json()
+                    except:
+                        result = response.text
                     self.error = 'An unexpected status code of response - %s' % response.status_code
                     self.recoverable = False
             else:
                 if response.status_code == 204:
                     result = True
                 else:
+                    try:
+                        result = response.json()
+                    except:
+                        result = response.text
                     self.error = 'An unexpected status code of response - %s' % response.status_code
                     self.recoverable = False
             if len(response.history) > 0:
